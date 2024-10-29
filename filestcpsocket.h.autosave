@@ -1,0 +1,23 @@
+#ifndef FILESTCPSOCKET_H
+#define FILESTCPSOCKET_H
+
+#include <QObject>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QThread>
+#include <QDebug>
+
+
+class FilesTcpSocket:public QThread
+{
+    Q_OBJECT
+    
+    QTcpSocket *pTcpSocket;
+public:
+    FilesTcpSocket(QObject *parent = nullptr) : QThread(parent) {}
+
+protected:
+    void run() override;
+};
+
+#endif // FILESTCPSOCKET_H

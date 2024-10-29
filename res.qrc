@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>file.png</file>
+        <file>file-transfer.png</file>
+    </qresource>
+</RCC>
