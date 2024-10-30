@@ -10,6 +10,8 @@ void FilesDialog::init(QString ip_arg,
                        bool mode_arg)
 {
     ui->setupUi(this);
+    pServerThread = nullptr;
+    pClientThread = nullptr;
     isServer = mode_arg;
     host = host_arg;
     ip = ip_arg;
@@ -175,6 +177,7 @@ void FilesDialog::closeEvent(QCloseEvent *event)
     {
         if(pServerThread&&pServerThread->isRunning()){
             pServerThread->quit();
+            pServerThread->wait();
             pServerThread->deleteLater();
             pServerThread=nullptr;
 
@@ -183,10 +186,11 @@ void FilesDialog::closeEvent(QCloseEvent *event)
     }else {
         if(pClientThread&&pClientThread->isRunning()){
             pClientThread->quit();
+            pClientThread->wait();
             pClientThread->deleteLater();
             pClientThread = nullptr;
         }
-        emit destroyed(this);
+            emit destroyed(this);
     }
 
     if(pShareMemory!=nullptr) {

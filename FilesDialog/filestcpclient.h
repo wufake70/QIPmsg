@@ -1,4 +1,4 @@
-#ifndef FILESTCPSOCKET_H
+﻿#ifndef FILESTCPSOCKET_H
 #define FILESTCPSOCKET_H
 
 #include <QObject>

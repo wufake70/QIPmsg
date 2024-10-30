@@ -19,7 +19,22 @@
 #define QIPMSG_TCP_FILE_SCHEDULE    0x000000b
 #define QIPMSG_TCP_FILE_END         0x000000c
 
-#define QIPMSG_VERSION              "0.1.2"
+#define QIPMSG_VERSION              "0.1.3"
+/*
+ * 解决了win7x32下 主动退出文件接受界面时，
+ * 程序崩溃问题。
+   FilesDialog::closeEvent
+    ...
+    if(pClientThread&&pClientThread->isRunning()){
+        pClientThread->quit();
+        pClientThread->wait(); // 新增
+        pClientThread->deleteLater();
+        pClientThread = nullptr;
+    }
+    ...
+ * */
+
+//#define QIPMSG_VERSION              "0.1.2"
 /*
  * 解决了一些ui中textedit忽大忽小问题
  *
