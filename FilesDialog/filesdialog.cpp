@@ -4,6 +4,7 @@
 #include <QToolTip>
 #include <QStandardPaths>
 #include <QDesktopServices>
+#include <QFileDialog>
 
 void FilesDialog::init(QString ip_arg,
                        QString host_arg,
@@ -20,11 +21,12 @@ void FilesDialog::init(QString ip_arg,
 
     connect(this,&FilesDialog::curHandlingFileState,
             this,&FilesDialog::on_curHandlingFileState);
-    if(singleton()){
+    if(singleton()){ // 单例模式
         if(isServer)
         {
             setWindowTitle("发送到 "+host_arg);
             ui->label->setText("发送到 "+ip_arg);
+            ui->listWidget->setToolTip("支持拖动文件操作;\n双击指定列表项即可删除;");
             connect(ui->listWidget,
                     SIGNAL(itemDoubleClicked(QListWidgetItem *)),
                     this,SLOT(itemDoubleClick(QListWidgetItem *)));
@@ -37,19 +39,21 @@ void FilesDialog::init(QString ip_arg,
         }else {
             setWindowTitle("来自于 "+host_arg);
             ui->label->setText("来自于 "+ip_arg);
-            ui->pushButton->setEnabled(false);
-            ui->pushButton_2->setText("查看目录");
-            connect(ui->pushButton_2,&QPushButton::clicked,
-                    ui->pushButton_2,[](){
+            ui->pushButton_selectfile->setEnabled(false);
+            ui->pushButton_selectfile->hide();
+            ui->pushButton_sendfile->setText("查看目录");
+            ui->listWidget->setToolTip("");
+            connect(ui->pushButton_sendfile,&QPushButton::clicked,
+                    ui->pushButton_sendfile,[](){
 
                 QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 homePath += "/QIpmsg";
                 QUrl url = QUrl::fromLocalFile(homePath);
                 QDesktopServices::openUrl(url);
             });
-            ui->pushButton_2->disconnect(SIGNAL(clicked()), this, SLOT(on_pushButton_2_clicked()));
+            ui->pushButton_sendfile->disconnect(SIGNAL(clicked()), this, SLOT(on_pushButton_sendfile_clicked()));
 
-            ui->pushButton_2->setEnabled(true);
+            ui->pushButton_sendfile->setEnabled(true);
             setAcceptDrops(false);
             pClientThread = new ClientThread(ip,this);
             pClientThread->start();
@@ -110,7 +114,7 @@ FilesDialog::FilesDialog(QString ip_arg,
 void FilesDialog::itemDoubleClick(QListWidgetItem *item)
 {
     filePathList.removeOne(item->text());
-    emit Widget::instance->sendMsgFileAddOrDel(ip,false,filePathList);
+    emit MainWidget::instance->sendMsgFileAddOrDel(ip,false,filePathList);
     updateListWidget();
 }
 
@@ -230,13 +234,14 @@ void FilesDialog::dropEvent(QDropEvent *event)
         }
     }
     updateListWidget();
-    emit Widget::instance->sendMsgFileAddOrDel(ip,true,filePathList);
+    emit MainWidget::instance->sendMsgFileAddOrDel(ip,true,filePathList);
 }
 
 bool FilesDialog::singleton()
 {
+    QString temp = ip;
 
-    pShareMemory->setKey(ip);
+    pShareMemory->setKey(temp);
     if(!pShareMemory->attach())
     {
         pShareMemory->create(1,QSharedMemory::ReadOnly);
@@ -246,9 +251,26 @@ bool FilesDialog::singleton()
     return false;
 }
 
-void FilesDialog::on_pushButton_2_clicked()
+void FilesDialog::on_pushButton_sendfile_clicked()
 {
-    if(thread()!=Widget::instance->shptrTcpServer->thread())
+    if(filePathList.size()<=0)
+    {
+        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setToolTip("");
+        ui->pushButton_sendfile->setEnabled(true);
+        QMessageBox *pMsgBox = new QMessageBox(this);
+        pMsgBox->setWindowTitle(this->windowTitle());
+        pMsgBox->setText("当前文件传输队列为空。");
+        pMsgBox->setModal(false);
+        pMsgBox->show();
+        connect(pMsgBox,&QObject::destroyed,
+                this, [pMsgBox](){
+
+            pMsgBox->deleteLater();
+        });
+        return;
+    }
+    if(thread()!=MainWidget::instance->shptrTcpServer->thread())
     {
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
@@ -263,23 +285,40 @@ void FilesDialog::on_pushButton_2_clicked()
         return;
     }
 
-    emit Widget::instance->sendMsgFileSendAck(this);
-    ui->pushButton_2->setText("等待中...");
-    ui->pushButton_2->setToolTip("等待对方确认中...");
-    ui->pushButton_2->setToolTipDuration(3000);
-    ui->pushButton_2->setEnabled(false);
-    ui->pushButton_2->toolTip();
-    QToolTip::showText(ui->pushButton_2->mapToGlobal(QPoint(0,0)),
+    emit MainWidget::instance->sendMsgFileSendAck(this);
+    ui->pushButton_sendfile->setText("等待中...");
+    ui->pushButton_sendfile->setToolTip("等待对方确认中...");
+    ui->pushButton_sendfile->setToolTipDuration(3000);
+    ui->pushButton_sendfile->setEnabled(false);
+    ui->pushButton_sendfile->toolTip();
+    QToolTip::showText(ui->pushButton_sendfile->mapToGlobal(QPoint(0,0)),
                        "等待对方确认中...",this,this->rect(),4500);
 }
 
 void FilesDialog::on_startSendFiles()
 {
-    if(thread()!=Widget::instance->shptrTcpServer->thread())
+    if(filePathList.size()<=0)
     {
-        ui->pushButton_2->setText("发送");
-        ui->pushButton_2->setToolTip("");
-        ui->pushButton_2->setEnabled(true);
+        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setToolTip("");
+        ui->pushButton_sendfile->setEnabled(true);
+        QMessageBox *pMsgBox = new QMessageBox(this);
+        pMsgBox->setWindowTitle(this->windowTitle());
+        pMsgBox->setText("当前文件传输队列为空。");
+        pMsgBox->setModal(false);
+        pMsgBox->show();
+        connect(pMsgBox,&QObject::destroyed,
+                this, [pMsgBox](){
+
+            pMsgBox->deleteLater();
+        });
+        return;
+    }
+    if(thread()!=MainWidget::instance->shptrTcpServer->thread())
+    {
+        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setToolTip("");
+        ui->pushButton_sendfile->setEnabled(true);
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
         pMsgBox->setText("当前已有文件在发送\n无法进行相关操作");
@@ -292,9 +331,9 @@ void FilesDialog::on_startSendFiles()
         });
         return;
     }
-    ui->pushButton_2->setText("发送中...");
-    ui->pushButton_2->setToolTip("");
-    ui->pushButton_2->setEnabled(false);
+    ui->pushButton_sendfile->setText("发送中...");
+    ui->pushButton_sendfile->setToolTip("");
+    ui->pushButton_sendfile->setEnabled(false);
     emit switchTcpServerThread();
 }
 
@@ -329,9 +368,9 @@ void FilesDialog::on_curHandlingFileState(int type,QString fullPath,qint8 rate)
             this->pClientThread->isReceiving = false;
             return;
         }
-        ui->pushButton_2->setText("发送");
-        ui->pushButton_2->setToolTip("");
-        ui->pushButton_2->setEnabled(true);
+        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setToolTip("");
+        ui->pushButton_sendfile->setEnabled(true);
         ui->label_processbar->setToolTip("");
         ui->listWidget->setToolTip("双击即可删除指定项");
         connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem *)),
@@ -340,4 +379,42 @@ void FilesDialog::on_curHandlingFileState(int type,QString fullPath,qint8 rate)
 
     }
 }
+
+
+void FilesDialog::on_pushButton_selectfile_clicked()
+{
+    // 创建一个文件对话框
+     QFileDialog *pDlg = new QFileDialog(this);
+     pDlg->setFileMode(QFileDialog::ExistingFiles); // 设置对话框可以选择多个文件
+     pDlg->setAcceptMode(QFileDialog::AcceptOpen); // 设置对话框为打开文件模式
+
+     pDlg->setModal(false); // 非阻塞
+     ui->pushButton_selectfile->setEnabled(false);
+     ui->pushButton_sendfile->setEnabled(false);
+     // 显示文件对话框
+     pDlg->show();
+
+     QStringList filePathList;
+     connect(pDlg,&QFileDialog::finished,
+             pDlg,[pDlg,this](int result){
+        if(result==QDialog::Accepted)
+         {
+            foreach(auto path,pDlg->selectedFiles())
+            {
+                if(!this->filePathList.contains(path))
+                    this->filePathList.append(path);
+            }
+            this->updateListWidget();
+            emit MainWidget::instance->sendMsgFileAddOrDel(this->ip,
+                                                           true,
+                                                           this->filePathList);
+        }
+
+         ui->pushButton_selectfile->setEnabled(true);
+         ui->pushButton_sendfile->setEnabled(true);
+         pDlg->deleteLater();
+     });
+
+}
+
 

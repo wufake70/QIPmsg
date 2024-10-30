@@ -21,7 +21,9 @@
 
 #define QIPMSG_VERSION              "0.1.3"
 /*
- * 解决了win7x32下 主动退出文件接受界面时，
+ * 1、修复ui组件忽大忽小问题
+ *
+ * 2、解决了win7x32下 主动退出文件接受界面时，
  * 程序崩溃问题。
    FilesDialog::closeEvent
     ...

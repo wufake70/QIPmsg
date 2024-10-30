@@ -7,7 +7,7 @@
 #include <QDir>
 
 
-Widget::Widget(QWidget *parent)
+MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
@@ -61,7 +61,7 @@ Widget::Widget(QWidget *parent)
     timer.start();
 }
 
-void Widget::isSingleton()
+void MainWidget::isSingleton()
 {
     singleton.setKey("Qipmsg");
     if(!singleton.attach())
@@ -73,12 +73,12 @@ void Widget::isSingleton()
     }
 }
 
-Widget::~Widget()
+MainWidget::~MainWidget()
 {
     delete ui;
 }
 
-QStringList Widget::getLocalHostIps()
+QStringList MainWidget::getLocalHostIps()
 {
     hostName = QHostInfo::localHostName();
     QStringList result;
@@ -99,7 +99,7 @@ QStringList Widget::getLocalHostIps()
 
 }
 
-void Widget::startUdpSocket()
+void MainWidget::startUdpSocket()
 {
     if(pUdpSocket->bind(port))
     {
@@ -111,17 +111,17 @@ void Widget::startUdpSocket()
     }
 
 }
-void Widget::stopUdpSocket()
+void MainWidget::stopUdpSocket()
 {
     if(pUdpSocket!=nullptr) pUdpSocket->abort();
 }
 
-void Widget::on_pushButton_refresh_clicked()
+void MainWidget::on_pushButton_refresh_clicked()
 {
     sendUdpSocket(1);
 }
 
-void Widget::on_pushButton_send_clicked()
+void MainWidget::on_pushButton_send_clicked()
 {
     if(ui->textEdit_send->toPlainText().startsWith("/file"))
     {
@@ -133,7 +133,7 @@ void Widget::on_pushButton_send_clicked()
     }
 }
 
-void Widget::clickTableWidgetItem(QTableWidgetItem *item)
+void MainWidget::clickTableWidgetItem(QTableWidgetItem *item)
 {
     int index = item->row()-1;
     if(index<0||curShowPteIndex==index) return;
@@ -142,7 +142,7 @@ void Widget::clickTableWidgetItem(QTableWidgetItem *item)
     updateTextEdit();
 }
 
-void Widget::on_switchTcpServerObjThread(QThread *target)
+void MainWidget::on_switchTcpServerObjThread(QThread *target)
 {
     shptrTcpServer.get()->moveToThread(target);
     emit ((ServerThread*)target)->sendFileTcpSocket();
@@ -150,7 +150,7 @@ void Widget::on_switchTcpServerObjThread(QThread *target)
 
 
 // QIPMSG_UPD_EXIT
-void Widget::closeEvent(QCloseEvent *event)
+void MainWidget::closeEvent(QCloseEvent *event)
 {
     singleton.detach(); // avoid memory loss(ubuntu)
     sendUdpSocket(QIPMSG_UPD_EXIT);
@@ -162,7 +162,7 @@ void Widget::closeEvent(QCloseEvent *event)
 }
 
 
-void Widget::dragEnterEvent(QDragEnterEvent *event)
+void MainWidget::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasUrls())
     {
@@ -170,7 +170,7 @@ void Widget::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
-void Widget::dropEvent(QDropEvent *event)
+void MainWidget::dropEvent(QDropEvent *event)
 {
     const QMimeData *mimeData = event->mimeData();
     filePathList.clear();
@@ -197,7 +197,7 @@ void Widget::dropEvent(QDropEvent *event)
 
 }
 
-void Widget::on_pushButton_checkDir_clicked()
+void MainWidget::on_pushButton_checkDir_clicked()
 {
     QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     homePath += "/QIpmsg";
@@ -212,7 +212,7 @@ void Widget::on_pushButton_checkDir_clicked()
     QDesktopServices::openUrl(url);
 }
 
-void Widget::on_pushButton_help_about_clicked()
+void MainWidget::on_pushButton_help_about_clicked()
 {
     static qint8 showflag = 0;
     if(showflag){
@@ -227,21 +227,23 @@ void Widget::on_pushButton_help_about_clicked()
     QVBoxLayout *pLayout = new QVBoxLayout(pMsgbox);
 
     // 创建 QLabel 对象
-    QLabel *pLabel = new QLabel("本程序基于QT5实现，支持局域网下主机探测、即时消息(udp实现)、<br>"
+    QLabel *pLabel = new QLabel("<h3>关于该软件</h3>"
+                              "本程序基于Qt5实现，支持局域网下主机探测、即时消息(udp实现)、<br>"
                               "一对一发送文件(速率上线取决于当前局域网设备，tcp实现)、<br>"
-                              "多对一发送文件(多线程+tcp实现)"
+                              "多对一发送文件(多线程+tcp实现)。"
+                              "<h3>使用说明：</h3>"
                               "<ul>"
                               "<li>选中目标主机，在文本框键内容，最后Enter"
                               "(Shift+Enter换行)<br>即可发送消息。</li>"
                               "<li>选中主机，拖动文件到主程序即可弹出文件发送框，<br>"
-                              "文件发送框支持拖动文件增加列表，双击列表框某一项即可删除。<br>"
+                              "文件发送框支持拖动文件增加列表，双击列表框某一项即可删除，<br>"
                               "点击发送，等待对方确认即可。</li>"
-                              "<li>注意设置防火墙允许本程序在专有网络(私有)下进行通信。<br>"
+                              "<li>注意设置防火墙允许本程序在专有网络(私有)下进行通信，<br>"
                               "可以手动设置防火墙入站规则。</li>"
                               "</ul>");
 
     // 设置字体大小和样式
-    QFont font("Arial", 10);  // 设置字体为 Arial, 大小为 12
+    QFont font("Adobe Devanagari", 10);  // 设置字体为 Arial, 大小为 12
     pLabel->setFont(font);
 
     // 设置文本对齐方式

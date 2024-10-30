@@ -1,4 +1,4 @@
-#ifndef FILEDIALOG_H
+﻿#ifndef FILEDIALOG_H
 #define FILEDIALOG_H
 
 #include <QWidget>
@@ -27,7 +27,7 @@ class FilesDialog : public QWidget
 public:
     QString ip;
     QList<QString> filePathList;  // 文件队列
-    QList<QString> handledFilePathList;
+//    QList<QString> handledFilePathList;
     void updateListWidget();
 private:
     bool isServer;
@@ -47,14 +47,18 @@ signals:
     void sendFileTcpSocket();
     void curHandlingFileState(int,QString,qint8=0);
 //    void clientSendAckMsgBox();
+public slots:
+    void onCloseFilesDialog();
 
 private slots:
     void itemDoubleClick(QListWidgetItem *);
-    void onCloseFilesDialog();
-    void on_pushButton_2_clicked();
     void on_startSendFiles();
     void on_curHandlingFileState(int,QString,qint8=0);
+    void on_pushButton_selectfile_clicked();
+    void on_pushButton_sendfile_clicked();
 //    void on_clientSendAckMsgBox();
+
+
 
 public:
     bool singleton();

@@ -5,7 +5,7 @@
 #include <QTimer>
 
 
-void Widget::UdpEvent()
+void MainWidget::UdpEvent()
 {
     while(pUdpSocket->hasPendingDatagrams())
     {
@@ -48,16 +48,16 @@ void Widget::UdpEvent()
         case QIPMSG_UPD_EXIT:
             if(memberIpList.contains(tempIpStr))
             {
-                pteList.at(memberIpList.indexOf(tempIpStr))->deleteLater();
                 if(curShowPteIndex==memberIpList.indexOf(tempIpStr))
                 {
+                    oldShowPteIndex=curShowPteIndex;
                     curShowPteIndex=0;
-                    oldShowPteIndex=0;
                 }
+                updateTextEdit();
+                pteList.at(memberIpList.indexOf(tempIpStr))->deleteLater();
                 pteList.removeAt(memberIpList.indexOf(tempIpStr));
                 memberIpList.removeOne(tempIpStr);
                 memberNameList.removeOne(jsonObj["host_name"].toString());
-                updateTextEdit();
 
             }
             updateMembersTable();
@@ -119,7 +119,7 @@ void Widget::UdpEvent()
                 pMsgBox->setModal(false); // 非阻塞
                 pMsgBox->show();
                 connect(pMsgBox,&QMessageBox::finished,this,
-                        [this,tempIpStr,jsonObj](int result){
+                        [this,tempIpStr,jsonObj,pfdlg](int result){
 
                     if(result==QMessageBox::Ok)
                     {
@@ -139,9 +139,13 @@ void Widget::UdpEvent()
                         }
                         updateTextEdit();
                         sendUdpSocket(QIPMSG_UPD_FILE_RECEIVEACK,tempIpStr);
+                        this->sendAckMsgBoxMap[tempIpStr]->deleteLater();
+                        this->sendAckMsgBoxMap[tempIpStr] = nullptr;
+                    }else{
+                        this->sendAckMsgBoxMap[tempIpStr]->deleteLater();
+                        this->sendAckMsgBoxMap[tempIpStr] = nullptr;
+                        pfdlg->close();
                     }
-                    this->sendAckMsgBoxMap[tempIpStr]->deleteLater();
-                    this->sendAckMsgBoxMap[tempIpStr] = nullptr;
 
                 });
             }

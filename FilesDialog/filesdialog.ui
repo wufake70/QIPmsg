@@ -62,7 +62,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pushButton_selectfile">
          <property name="font">
           <font>
            <family>Adobe Devanagari</family>
@@ -77,7 +77,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="pushButton_sendfile">
          <property name="font">
           <font>
            <family>Adobe Devanagari</family>

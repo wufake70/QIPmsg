@@ -1,4 +1,4 @@
-#include "filestcpserver.h"
+﻿#include "filestcpserver.h"
 #include "FilesDialog/filesdialog.h"
 #include "Widget/widget.h"
 #include <QJsonDocument>
@@ -42,7 +42,7 @@ void FilesTcpServer::on_switchTcpServerThread()
     // 切换TcpServer的线程对象
     QThread *curThread = QThread::currentThread();
 //    QThread *mainThread = Widget::instance->pMainThread;
-    emit Widget::instance->switchTcpServerObjThread(curThread);
+    emit MainWidget::instance->switchTcpServerObjThread(curThread);
 }
 void FilesTcpServer::on_sendFileTcpSocket()
 {
@@ -112,7 +112,7 @@ void FilesTcpServer::on_sendFileTcpSocket()
     }
 
     // tcpServer对象移到主线程
-    Widget::instance->shptrTcpServer.get()->moveToThread(
-                Widget::instance->pMainThread);
+    MainWidget::instance->shptrTcpServer.get()->moveToThread(
+                MainWidget::instance->pMainThread);
 }
 

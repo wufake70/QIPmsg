@@ -1,8 +1,8 @@
-#include "widget.h"
+﻿#include "widget.h"
 #include "ui_widget.h"
 #include <QJsonArray>
 
-void Widget::sendUdpSocket(int type,QString targetIp)
+void MainWidget::sendUdpSocket(int type,QString targetIp)
 {
     QJsonObject jsonObj;
     jsonObj["host_name"] = hostName;
@@ -50,7 +50,7 @@ void Widget::sendUdpSocket(int type,QString targetIp)
 }
 
 // udp探测其他主机
-void Widget::probeHost(QJsonObject& jsonObj)
+void MainWidget::probeHost(QJsonObject& jsonObj)
 {
     QJsonDocument jsonDoc;
     QString broadcast;
@@ -65,7 +65,7 @@ void Widget::probeHost(QJsonObject& jsonObj)
     }
 }
 
-void Widget::sendMsg(QJsonObject &jsonObj)
+void MainWidget::sendMsg(QJsonObject &jsonObj)
 {
     QJsonDocument jsonDoc;
     if(!ui->textEdit_send->toPlainText().isEmpty()||
@@ -83,7 +83,7 @@ void Widget::sendMsg(QJsonObject &jsonObj)
     }
 }
 //
-void Widget::sendMsgBuildTcp(QJsonObject &jsonObj)
+void MainWidget::sendMsgBuildTcp(QJsonObject &jsonObj)
 {
     QJsonDocument jsonDoc;
     QJsonArray jsonArr;
@@ -104,7 +104,7 @@ void Widget::sendMsgBuildTcp(QJsonObject &jsonObj)
     }
 }
 
-void Widget::sendMsgFileAdd(QJsonObject &jsonObj)
+void MainWidget::sendMsgFileAdd(QJsonObject &jsonObj)
 {
     QJsonDocument jsonDoc;
     QJsonArray jsonArr;
@@ -127,7 +127,7 @@ void Widget::sendMsgFileAdd(QJsonObject &jsonObj)
     }
 }
 
-void Widget::sendMsgFileDel(QJsonObject &jsonObj)
+void MainWidget::sendMsgFileDel(QJsonObject &jsonObj)
 {
     QJsonDocument jsonDoc;
     QJsonArray jsonArr;
@@ -150,7 +150,7 @@ void Widget::sendMsgFileDel(QJsonObject &jsonObj)
     }
 }
 
-void Widget::sendMsgFileSendAck(QJsonObject &jsonObj,QString targetIp)
+void MainWidget::sendMsgFileSendAck(QJsonObject &jsonObj,QString targetIp)
 {
     QJsonDocument jsonDoc;
     if(jsonObj["type"].toInt()==QIPMSG_UPD_FILE_SENDACK){
@@ -166,7 +166,7 @@ void Widget::sendMsgFileSendAck(QJsonObject &jsonObj,QString targetIp)
         pUdpSocket->writeDatagram(jsonDoc.toJson(),addr,port);
     }
 }
-void Widget::sendMsgFileReceiveAck(QJsonObject &jsonObj,QString tardgetIp)
+void MainWidget::sendMsgFileReceiveAck(QJsonObject &jsonObj,QString tardgetIp)
 {
     QJsonDocument jsonDoc;
     if(jsonObj["type"].toInt()==QIPMSG_UPD_FILE_RECEIVEACK){
@@ -183,7 +183,7 @@ void Widget::sendMsgFileReceiveAck(QJsonObject &jsonObj,QString tardgetIp)
     }
 }
 
-void Widget::on_sendMsgFileAddOrDel(QString ip,bool isAdd,QString file)
+void MainWidget::on_sendMsgFileAddOrDel(QString ip,bool isAdd,QString file)
 {
     filePathList << file;
     oldShowPteIndex = curShowPteIndex;
@@ -198,7 +198,7 @@ void Widget::on_sendMsgFileAddOrDel(QString ip,bool isAdd,QString file)
     filePathList.clear();
 }
 
-void Widget::on_sendMsgFileAddOrDel(QString ip,bool isAdd,QStringList fileList)
+void MainWidget::on_sendMsgFileAddOrDel(QString ip,bool isAdd,QStringList fileList)
 {
     filePathList = fileList;
     oldShowPteIndex = curShowPteIndex;
@@ -213,7 +213,7 @@ void Widget::on_sendMsgFileAddOrDel(QString ip,bool isAdd,QStringList fileList)
     filePathList.clear();
 }
 
-void Widget::on_sendMsgFileSendAck(FilesDialog *pfdlg)
+void MainWidget::on_sendMsgFileSendAck(FilesDialog *pfdlg)
 {
     sendUdpSocket(QIPMSG_UPD_FILE_SENDACK,pfdlg->ip);
 }

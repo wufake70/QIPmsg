@@ -1,8 +1,8 @@
-#include "widget.h"
+﻿#include "widget.h"
 #include <QNetworkProxy>
 
 
-void Widget::initTcpServer()
+void MainWidget::initTcpServer()
 {
     QSharedPointer<QTcpServer> shptrTcpServer_(new QTcpServer());
     shptrTcpServer = shptrTcpServer_;
@@ -13,7 +13,7 @@ void Widget::initTcpServer()
             SLOT(on_newTcpSocketConnect()));
 }
 
-void Widget::on_newTcpSocketConnect()
+void MainWidget::on_newTcpSocketConnect()
 {
     QTcpSocket *pTcpSocket = shptrTcpServer->nextPendingConnection();
     connect(pTcpSocket,SIGNAL(disconnected),
@@ -30,12 +30,12 @@ void Widget::on_newTcpSocketConnect()
     fdlgMap[ipv4ToString(pTcpSocket->peerAddress().toIPv4Address())] = pfdlg;
     // FilesDialog销毁时,对应移除 hostSocketMap数据
     connect(pfdlg,&FilesDialog::destroyed,
-            this,&Widget::on_destroyFilesDialog);
+            this,&MainWidget::on_destroyFilesDialog);
     filePathList.clear();
 
 }
 
-void Widget::on_destroyFilesDialog(QObject *obj)
+void MainWidget::on_destroyFilesDialog(QObject *obj)
 {
     if(obj==nullptr) return;
     FilesDialog* pfdg = (FilesDialog*)obj;

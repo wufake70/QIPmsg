@@ -1,4 +1,4 @@
-#ifndef WIDGET_H
+﻿#ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QWidget>
@@ -33,7 +33,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
-class Widget : public QWidget
+class MainWidget : public QWidget
 {
     Q_OBJECT
 
@@ -111,15 +111,15 @@ protected:
 public:
     QSharedPointer<QTcpServer> shptrTcpServer;
     QThread *pMainThread;
-    static Widget* instance;
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
+    static MainWidget* instance;
+    MainWidget(QWidget *parent = nullptr);
+    ~MainWidget();
 
 private:
     Ui::Widget *ui;
 };
 
-inline QString Widget::ipv4ToString(int ipv4)
+inline QString MainWidget::ipv4ToString(int ipv4)
 {
     QString tempStr;
     tempStr.sprintf("%u.%u.%u.%u",

@@ -3,7 +3,7 @@
 
 
 
-void Widget::updateMembersTable()
+void MainWidget::updateMembersTable()
 {
     ui->tableWidget->clear();
     ui->tableWidget->setItem(0,0,new QTableWidgetItem("主机名"));
@@ -17,9 +17,10 @@ void Widget::updateMembersTable()
 }
 
 
-void Widget::updateTextEdit()
+void MainWidget::updateTextEdit()
 {
-    if(oldShowPteIndex<pteList.size() && pteList.size()>curShowPteIndex)
+    if(0<=oldShowPteIndex&&oldShowPteIndex<pteList.size()&&
+            0<=curShowPteIndex&&curShowPteIndex<pteList.size())
     {
         pteList.at(oldShowPteIndex)->hide();
         pteList.at(curShowPteIndex)->show();
@@ -27,11 +28,11 @@ void Widget::updateTextEdit()
     }
 }
 
-void Widget::updateTextEdit(QString content)
+void MainWidget::updateTextEdit(QString content)
 {
     pteList.at(curShowPteIndex)->append(content);
 }
-void Widget::updateTextEdit(int index,QString content)
+void MainWidget::updateTextEdit(int index,QString content)
 {
     oldShowPteIndex = curShowPteIndex;
     curShowPteIndex = index;
