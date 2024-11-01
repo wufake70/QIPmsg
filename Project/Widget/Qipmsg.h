@@ -19,7 +19,12 @@
 #define QIPMSG_TCP_FILE_SCHEDULE    0x000000b
 #define QIPMSG_TCP_FILE_END         0x000000c
 
-#define QIPMSG_VERSION              "0.1.3"
+#define QIPMSG_VERSION              "0.1.4"
+/*
+ * 增加程序英文翻译(匹配当前系统显示语言环境)
+ * */
+
+//#define QIPMSG_VERSION              "0.1.3"
 /*
  * 1、修复ui组件忽大忽小问题
  *

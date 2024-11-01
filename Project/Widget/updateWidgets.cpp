@@ -6,8 +6,8 @@
 void MainWidget::updateMembersTable()
 {
     ui->tableWidget->clear();
-    ui->tableWidget->setItem(0,0,new QTableWidgetItem("主机名"));
-    ui->tableWidget->setItem(0,1,new QTableWidgetItem("IP地址"));
+    ui->tableWidget->setItem(0,0,new QTableWidgetItem(tr("主机名")));
+    ui->tableWidget->setItem(0,1,new QTableWidgetItem(tr("IP地址")));
     for(int i=0;i<memberNameList.size();i++)
     {
         ui->tableWidget->setItem(i+1,0,new QTableWidgetItem(memberNameList.at(i)));

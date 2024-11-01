@@ -113,8 +113,8 @@ void MainWidget::UdpEvent()
             {
                 pMsgBox = new QMessageBox(pfdlg);
                 sendAckMsgBoxMap[tempIpStr] = pMsgBox;
-                pMsgBox->setWindowTitle("消息确认");
-                pMsgBox->setText("是否接收文件?");
+                pMsgBox->setWindowTitle(tr("消息确认"));
+                pMsgBox->setText(tr("是否接收文件?"));
                 pMsgBox->setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
                 pMsgBox->setModal(false); // 非阻塞
                 pMsgBox->show();

@@ -3,4 +3,7 @@
         <file>file.png</file>
         <file>file-transfer.png</file>
     </qresource>
+    <qresource prefix="/lang">
+        <file>QIPmsg_en.qm</file>
+    </qresource>
 </RCC>

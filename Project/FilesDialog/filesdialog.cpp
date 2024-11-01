@@ -24,9 +24,9 @@ void FilesDialog::init(QString ip_arg,
     if(singleton()){ // 单例模式
         if(isServer)
         {
-            setWindowTitle("发送到 "+host_arg);
-            ui->label->setText("发送到 "+ip_arg);
-            ui->listWidget->setToolTip("支持拖动文件操作;\n双击指定列表项即可删除;");
+            setWindowTitle(tr("发送到 ")+host_arg);
+            ui->label->setText(tr("发送到 ")+ip_arg);
+            ui->listWidget->setToolTip(tr("支持拖动文件操作;\n双击指定列表项即可删除;"));
             connect(ui->listWidget,
                     SIGNAL(itemDoubleClicked(QListWidgetItem *)),
                     this,SLOT(itemDoubleClick(QListWidgetItem *)));
@@ -37,11 +37,11 @@ void FilesDialog::init(QString ip_arg,
             connect(this,SIGNAL(startSendFiles()),
                     this,SLOT(on_startSendFiles()));
         }else {
-            setWindowTitle("来自于 "+host_arg);
-            ui->label->setText("来自于 "+ip_arg);
+            setWindowTitle(tr("来自于 ")+host_arg);
+            ui->label->setText(tr("来自于 ")+ip_arg);
             ui->pushButton_selectfile->setEnabled(false);
             ui->pushButton_selectfile->hide();
-            ui->pushButton_sendfile->setText("查看目录");
+            ui->pushButton_sendfile->setText(tr("查看目录"));
             ui->listWidget->setToolTip("");
             connect(ui->pushButton_sendfile,&QPushButton::clicked,
                     ui->pushButton_sendfile,[](){
@@ -150,7 +150,7 @@ void FilesDialog::closeEvent(QCloseEvent *event)
     {
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
-        pMsgBox->setText("正在接收文件\n无法进行相关操作");
+        pMsgBox->setText(tr("正在接收文件\n无法进行相关操作"));
         pMsgBox->setModal(false);
         pMsgBox->show();
         connect(pMsgBox,&QObject::destroyed,
@@ -166,7 +166,7 @@ void FilesDialog::closeEvent(QCloseEvent *event)
     {
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
-        pMsgBox->setText("文件正在发送\n无法进行相关操作");
+        pMsgBox->setText(tr("文件正在发送\n无法进行相关操作"));
         pMsgBox->setModal(false);
         pMsgBox->show();
         connect(pMsgBox,&QObject::destroyed,
@@ -255,12 +255,12 @@ void FilesDialog::on_pushButton_sendfile_clicked()
 {
     if(filePathList.size()<=0)
     {
-        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setText(tr("发送"));
         ui->pushButton_sendfile->setToolTip("");
         ui->pushButton_sendfile->setEnabled(true);
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
-        pMsgBox->setText("当前文件传输队列为空。");
+        pMsgBox->setText(tr("当前文件传输队列为空。"));
         pMsgBox->setModal(false);
         pMsgBox->show();
         connect(pMsgBox,&QObject::destroyed,
@@ -274,7 +274,7 @@ void FilesDialog::on_pushButton_sendfile_clicked()
     {
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
-        pMsgBox->setText("当前已有文件在发送\n无法进行相关操作");
+        pMsgBox->setText(tr("当前已有文件在发送\n无法进行相关操作"));
         pMsgBox->setModal(true);
         pMsgBox->show();
         connect(pMsgBox,&QObject::destroyed,
@@ -286,8 +286,8 @@ void FilesDialog::on_pushButton_sendfile_clicked()
     }
 
     emit MainWidget::instance->sendMsgFileSendAck(this);
-    ui->pushButton_sendfile->setText("等待中...");
-    ui->pushButton_sendfile->setToolTip("等待对方确认中...");
+    ui->pushButton_sendfile->setText(tr("等待中..."));
+    ui->pushButton_sendfile->setToolTip(tr("等待对方确认中..."));
     ui->pushButton_sendfile->setToolTipDuration(3000);
     ui->pushButton_sendfile->setEnabled(false);
     ui->pushButton_sendfile->toolTip();
@@ -299,12 +299,12 @@ void FilesDialog::on_startSendFiles()
 {
     if(filePathList.size()<=0)
     {
-        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setText(tr("发送"));
         ui->pushButton_sendfile->setToolTip("");
         ui->pushButton_sendfile->setEnabled(true);
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
-        pMsgBox->setText("当前文件传输队列为空。");
+        pMsgBox->setText(tr("当前文件传输队列为空。"));
         pMsgBox->setModal(false);
         pMsgBox->show();
         connect(pMsgBox,&QObject::destroyed,
@@ -316,12 +316,12 @@ void FilesDialog::on_startSendFiles()
     }
     if(thread()!=MainWidget::instance->shptrTcpServer->thread())
     {
-        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setText(tr("发送"));
         ui->pushButton_sendfile->setToolTip("");
         ui->pushButton_sendfile->setEnabled(true);
         QMessageBox *pMsgBox = new QMessageBox(this);
         pMsgBox->setWindowTitle(this->windowTitle());
-        pMsgBox->setText("当前已有文件在发送\n无法进行相关操作");
+        pMsgBox->setText(tr("当前已有文件在发送\n无法进行相关操作"));
         pMsgBox->setModal(false);
         pMsgBox->show();
         connect(pMsgBox,&QObject::destroyed,
@@ -331,7 +331,7 @@ void FilesDialog::on_startSendFiles()
         });
         return;
     }
-    ui->pushButton_sendfile->setText("发送中...");
+    ui->pushButton_sendfile->setText(tr("发送中..."));
     ui->pushButton_sendfile->setToolTip("");
     ui->pushButton_sendfile->setEnabled(false);
     emit switchTcpServerThread();
@@ -368,11 +368,11 @@ void FilesDialog::on_curHandlingFileState(int type,QString fullPath,qint8 rate)
             this->pClientThread->isReceiving = false;
             return;
         }
-        ui->pushButton_sendfile->setText("发送");
+        ui->pushButton_sendfile->setText(tr("发送"));
         ui->pushButton_sendfile->setToolTip("");
         ui->pushButton_sendfile->setEnabled(true);
         ui->label_processbar->setToolTip("");
-        ui->listWidget->setToolTip("双击即可删除指定项");
+        ui->listWidget->setToolTip(tr("双击即可删除指定项"));
         connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem *)),
                    this,SLOT(itemDoubleClick(QListWidgetItem *)));
         break;

@@ -19,8 +19,8 @@ MainWidget::MainWidget(QWidget *parent)
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowMaximizeButtonHint);
     port = QIPMSG_SERVER_PORT;
-    ui->tableWidget->setItem(0,0,new QTableWidgetItem("主机名")); // table widget init
-    ui->tableWidget->setItem(0,1,new QTableWidgetItem("IP地址"));
+    ui->tableWidget->setItem(0,0,new QTableWidgetItem(tr("主机名"))); // table widget init
+    ui->tableWidget->setItem(0,1,new QTableWidgetItem(tr("IP地址")));
 
     localIpList = getLocalHostIps();
     ui->label_2->setText(hostName);
@@ -63,7 +63,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 void MainWidget::isSingleton()
 {
-    singleton.setKey("Qipmsg");
+    singleton.setKey("QIPmsg");
     if(!singleton.attach())
     {
         singleton.create(1,QSharedMemory::ReadOnly);
@@ -222,12 +222,12 @@ void MainWidget::on_pushButton_help_about_clicked()
     }
     QDialog *pMsgbox = new QDialog(this);
     pMsgbox->setModal(false);
-    pMsgbox->setWindowTitle("Help&About");
+    pMsgbox->setWindowTitle(tr("帮助/关于"));
 
     QVBoxLayout *pLayout = new QVBoxLayout(pMsgbox);
 
     // 创建 QLabel 对象
-    QLabel *pLabel = new QLabel("<h3>关于该软件</h3>"
+    QLabel *pLabel = new QLabel(tr("<h3>关于该软件</h3>"
                               "本程序基于Qt5实现，支持局域网下主机探测、即时消息(udp实现)、<br>"
                               "一对一发送文件(速率上线取决于当前局域网设备，tcp实现)、<br>"
                               "多对一发送文件(多线程+tcp实现)。"
@@ -240,10 +240,16 @@ void MainWidget::on_pushButton_help_about_clicked()
                               "点击发送，等待对方确认即可。</li>"
                               "<li>注意设置防火墙允许本程序在专有网络(私有)下进行通信，<br>"
                               "可以手动设置防火墙入站规则。</li>"
-                              "</ul>");
+                              "</ul>"
+                              "<a href='https://github.com/wufake70/QIPmsg'>本项目GitHub仓库地址，给个star支持一下^v^</a>"));
+
+    connect(pLabel, &QLabel::linkActivated, [](const QString& link)
+    {
+            QDesktopServices::openUrl(QUrl(link));
+    });
 
     // 设置字体大小和样式
-    QFont font("Adobe Devanagari", 10);  // 设置字体为 Arial, 大小为 12
+    QFont font("Adobe Devanagari", 12);  // 设置字体为 Arial, 大小为 12
     pLabel->setFont(font);
 
     // 设置文本对齐方式
